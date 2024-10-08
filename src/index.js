@@ -12,3 +12,16 @@ const port = process.env.PORT;
 server.listen(port, ()=>{
     console.log(`Server is running in http://localhost:${port}`);
 })
+
+async function getConnectionDB(){
+    const conex = await mysql.createConnection({
+        host: "localhost",
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DATABASE
+    });
+    conex.connect();
+    console.log('se ha conectado')
+    return conex;
+};
+getConnectionDB();
