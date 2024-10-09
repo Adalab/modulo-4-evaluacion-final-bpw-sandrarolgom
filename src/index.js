@@ -76,3 +76,34 @@ server.post("/games_users", async (req, res)=>{
         success:true,
     })
 });
+//--> GET ENDPOINTS <--
+
+//1. Get games
+server.get("/games", async (req, res)=>{
+    const conex = await getConnectionDB();
+    const sql = "SELECT * FROM board_games;";
+    const [resultGames] = await conex.query(sql);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        resultP: resultGames,
+    });
+});
+
+//2. Get users
+server.get("/users", async (req, res)=>{
+    const conex = await getConnectionDB();
+    const sql = "SELECT * FROM users";
+    const [resultUsers] = await conex.query(sql);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        result: resultUsers,
+    });
+})
+
+//3. Get games_users
+// server.get("/games_users", async (req, res)=>{
+//     const conex = await getConnectionDB();
+//     const 
+// })
