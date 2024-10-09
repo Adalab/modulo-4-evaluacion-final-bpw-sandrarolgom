@@ -111,7 +111,7 @@ server.get("/users", async (req, res)=>{
 
 // --> PUT ENDPOINT <--
 
-//1. Update from game column
+//1. Update from board_game tables
 server.put("/games/:id", async (req, res)=>{
     const id = req.params.id;
     const {name, category, min_Players, max_Players} = req.body;
@@ -122,5 +122,46 @@ server.put("/games/:id", async (req, res)=>{
     res.status(200).json({
         success: true,
         message: "Actualizado con éxito"
+    });
+});
+
+// --> DELETE ENDPOINTS <--
+
+// 1. Delete from games
+server.delete("/games/:id", async (req, res)=>{
+    const id = req.params.id;
+    const conex = await getConnectionDB();
+    const sql = "DELETE FROM board_games WHERE idBoardGame=?;";
+    const [resultDeleteGame] = await conex.query(sql, [id]);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        message: "Juego eliminado con éxito"
+    });
+});
+
+// 2. Delete from users
+server.delete("/users/:id", async (req, res)=>{
+    const id = req.params.id;
+    const conex = await getConnectionDB();
+    const sql = "DELETE FROM users WHERE idUser=?;";
+    const [resultDeleteUser] = await conex.query(sql, [id]);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        message: "Usuario eliminado con éxito"
+    });
+});
+//3. Delete from games_users
+server.delete("/games_users/:idGame/:idUser", async (req, res)=>{
+    const idGame = req.params.idGame;
+    const idUser = req.params.idUser;
+    const conex = await getConnectionDB();
+    const sql = "DELETE FROM games_users WHERE idBoardGame = ? and idUser = ?;";
+    const [resultDeleteRelation] = await conex.query(sql, [idGame, idUser]);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        message: "Eliminado con éxito"
     });
 });
