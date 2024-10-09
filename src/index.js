@@ -104,10 +104,15 @@ server.get("/users", async (req, res)=>{
 })
 
 //3. Get games_users
-// server.get("/games_users", async (req, res)=>{
-//     const conex = await getConnectionDB();
-//     const 
-// })
+ server.get("/games_users", async (req, res)=>{
+     const conex = await getConnectionDB();
+     const sql = "SELECT users.username as users, GROUP_CONCAT(board_games.name SEPARATOR ', ') AS games FROM users INNER JOIN games_users ON users.idUser = games_users.idUser INNER JOIN board_games ON board_games.idBoardGame = games_users.idBoardGame GROUP BY users.idUser;"; // Returns two columns, one for users and another for games. The users are grouped, and the games are concatenated using GROUP_CONCAT
+     const [resultGamesUsers] = await conex.query(sql);
+     res.status(200).json({
+        success: true,
+        result:resultGamesUsers,
+     });
+ });
 
 // --> PUT ENDPOINT <--
 

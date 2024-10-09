@@ -8,12 +8,12 @@ CREATE TABLE board_games (
     min_Players INT NOT NULL,
     max_Players INT NOT NULL
 );
-ALTER TABLE board_games DROP column status;
 SELECT * FROM users;
 CREATE TABLE users (
 	idUser INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(45)
 );
+SELECT * FROM games_users;
 -- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -88,3 +88,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+SELECT users.username as users, GROUP_CONCAT(board_games.name SEPARATOR ', ') AS games
+FROM users
+INNER JOIN games_users ON users.idUser = games_users.idUser
+INNER JOIN board_games ON board_games.idBoardGame = games_users.idBoardGame
+GROUP BY users.idUser;
