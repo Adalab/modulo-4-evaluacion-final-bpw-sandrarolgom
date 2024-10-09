@@ -13,6 +13,8 @@ CREATE TABLE users (
 	idUser INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(45)
 );
+ALTER TABLE users ADD email VARCHAR(255) UNIQUE;
+ALTER TABLE users ADD password VARCHAR(255);
 SELECT * FROM games_users;
 -- MySQL Workbench Forward Engineering
 
@@ -94,3 +96,4 @@ FROM users
 INNER JOIN games_users ON users.idUser = games_users.idUser
 INNER JOIN board_games ON board_games.idBoardGame = games_users.idBoardGame
 GROUP BY users.idUser;
+

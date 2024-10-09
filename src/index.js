@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 require("dotenv").config();
 
@@ -186,3 +188,28 @@ server.delete("/games_users/:idGame/:idUser", async (req, res)=>{
     });
 });
 
+// --> ENDPOINT SIGNUP <--
+server.post("/register", async (req, res)=>{
+    const {username, email, password} = req.body;
+    const conex = await getConnectionDB();
+    //autenticate email
+    const sql = "SELECT * FROM users WHERE email = ?;";
+    const [resultSearchEmail] = await conex.query(sql, [email]);
+    //if not found this email...
+    if(resultSearchEmail.length === 0){
+        //const with password encriptada
+        const passHashed = await bcrypt.hash(password, 10);
+        const sqlInsert = "INSERT INTO users (username, email, password) VALUE (?,?,?);";
+        const [resultSignup] = await conex.query(sqlInsert, [username, email, passHashed]);
+        res.status(200).json({
+            success: true,
+            token: passHashed,
+        })
+    } else {
+        res.status(200).json({
+            success: false,
+            error: "Email ya registrado",
+        });
+    };
+    conex.end();
+});
