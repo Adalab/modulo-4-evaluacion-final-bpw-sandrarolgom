@@ -42,7 +42,7 @@ server.post("/games", async (req, res)=>{
         conex.end();
         res.status(200).json({
             success: true,
-            result: "Se ha añadido un nuevo juego",
+            message: "Se ha añadido un nuevo juego",
         });
     }; 
 });
@@ -61,7 +61,7 @@ server.post("/users", async (req, res)=>{
         conex.end();
         res.status(200).json({
             success:true,
-            result:"Nuevo usuario añadido"
+            message:"Nuevo usuario añadido"
         });
     };
 });
@@ -76,6 +76,7 @@ server.post("/games_users", async (req, res)=>{
         success:true,
     })
 });
+
 //--> GET ENDPOINTS <--
 
 //1. Get games
@@ -107,3 +108,19 @@ server.get("/users", async (req, res)=>{
 //     const conex = await getConnectionDB();
 //     const 
 // })
+
+// --> PUT ENDPOINT <--
+
+//1. Update from game column
+server.put("/games/:id", async (req, res)=>{
+    const id = req.params.id;
+    const {name, category, min_Players, max_Players} = req.body;
+    const conex = await getConnectionDB();
+    const sql = "UPDATE board_games SET name=?, category=?, min_Players=?, max_Players=? WHERE idBoardGame=?;";
+    const [resultUpdateGames] = await conex.query(sql, [name, category, min_Players, max_Players, id]);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        message: "Actualizado con éxito"
+    });
+});
