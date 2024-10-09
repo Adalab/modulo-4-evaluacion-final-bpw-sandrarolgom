@@ -48,16 +48,16 @@ server.post("/games", async (req, res)=>{
 });
 // 2. Create new user
 server.post("/users", async (req, res)=>{
-    const {username} = req.body;
-    if(!username) {
+    const {username, email, password} = req.body;
+    if(!username, !email, !password) {
         res.status(400).json({
             success:false,
             message:"Campo obligatorio: nombre"
         });
     } else {
         const conex = await getConnectionDB();
-        const sql = "INSERT INTO users (username) VALUES (?);";
-        const [result] = await conex.query(sql, [username]);
+        const sql = "INSERT INTO users (username, email, password) VALUES (?,?,?);";
+        const [result] = await conex.query(sql, [username, email, password]);
         conex.end();
         res.status(200).json({
             success:true,
@@ -116,13 +116,27 @@ server.get("/users", async (req, res)=>{
 
 // --> PUT ENDPOINT <--
 
-//1. Update from board_game tables
+//1. Update from board_game table
 server.put("/games/:id", async (req, res)=>{
     const id = req.params.id;
     const {name, category, min_Players, max_Players} = req.body;
     const conex = await getConnectionDB();
     const sql = "UPDATE board_games SET name=?, category=?, min_Players=?, max_Players=? WHERE idBoardGame=?;";
     const [resultUpdateGames] = await conex.query(sql, [name, category, min_Players, max_Players, id]);
+    conex.end();
+    res.status(200).json({
+        success: true,
+        message: "Actualizado con éxito"
+    });
+});
+
+//2. Update from users table
+server.put("/users/:id", async (req, res)=>{
+    const id = req.params.id;
+    const {username, email, password} = req.body;
+    const conex = await getConnectionDB();
+    const sql = "UPDATE users SET username=?, email=?, password=? WHERE idUser=?;";
+    const [resultUpdateGames] = await conex.query(sql, [username, email, password, id]);
     conex.end();
     res.status(200).json({
         success: true,
@@ -157,6 +171,7 @@ server.delete("/users/:id", async (req, res)=>{
         message: "Usuario eliminado con éxito"
     });
 });
+
 //3. Delete from games_users
 server.delete("/games_users/:idGame/:idUser", async (req, res)=>{
     const idGame = req.params.idGame;
@@ -170,3 +185,4 @@ server.delete("/games_users/:idGame/:idUser", async (req, res)=>{
         message: "Eliminado con éxito"
     });
 });
+
